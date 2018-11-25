@@ -28,3 +28,18 @@ describe('given a non empty square', () => {
         });
     });
 });
+
+describe('given an empty square and all but one value exist', () => {
+    const x = 0;
+    const y = 8;
+    let result;
+    describe('when evaluating', () => {
+        beforeEach(() => {
+            result = Engine.evaluate(board, x, y);
+        });
+
+        it('is the only option', () => {
+            expect(result).toBe(2);
+        });
+    });
+});
