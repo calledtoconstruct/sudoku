@@ -43,3 +43,18 @@ describe('given an empty square and all but one value exist', () => {
         });
     });
 });
+
+describe('given an empty square and only one option can not go elsewhere in sector', () => {
+    const x = 8;
+    const y = 4;
+    let result;
+    describe('when evaluating', () => {
+        beforeEach(() => {
+            result = Engine.evaluate(board, x, y);
+        });
+
+        it('is the only option', () => {
+            expect(result).toBe(1);
+        });
+    });
+});
