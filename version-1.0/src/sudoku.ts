@@ -55,11 +55,13 @@ export class Engine {
             return board[y * 9 + x];
         }
 
-        let options = Engine.options(board, x, y);
+        const options = Engine.options(board, x, y);
 
         if (options.length === 1) {
             return options[0];
         }
+
+        let community = [...options];
 
         const sector = Engine.sector(x, y);
 
@@ -68,14 +70,48 @@ export class Engine {
                 if (Engine.empty(board, a, b)) {
                     const elsewhere = Engine.options(board, a, b);
                     elsewhere.forEach((c: number): void => {
-                        options = options.filter((d: number): boolean => c !== d);
+                        community = community.filter((d: number): boolean => c !== d);
                     });
                 }
             }
         });
 
-        if (options.length === 1) {
-            return options[0];
+        if (community.length === 1) {
+            return community[0];
+        }
+
+        let row = [...options];
+
+        Engine.traverse((a: number): void => {
+            if (a !== x) {
+                if (Engine.empty(board, a, y)) {
+                    const elsewhere = Engine.options(board, a, y);
+                    elsewhere.forEach((b: number): void => {
+                        row = row.filter((c: number): boolean => b !== c);
+                    });
+                }
+            }
+        });
+
+        if (row.length === 1) {
+            return row[0];
+        }
+
+        let column = [...options];
+
+        Engine.traverse((a: number): void => {
+            if (a !== y) {
+                if (Engine.empty(board, x, a)) {
+                    const elsewhere = Engine.options(board, x, a);
+                    elsewhere.forEach((b: number): void => {
+                        column = column.filter((c: number): boolean => b !== c);
+                    });
+                }
+            }
+        });
+
+        if (column.length === 1) {
+            return column[0];
         }
 
         return 0;

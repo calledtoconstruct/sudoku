@@ -6,7 +6,7 @@ const board = [
     4, 7, 0,  0, 9, 1,  0, 0, 5, 
     
     0, 0, 0,  9, 0, 3,  0, 0, 2, 
-    0, 0, 2,  0, 8, 7,  0, 0, 0, 
+    0, 0, 2,  0, 8, 7,  0, 5, 0, 
     1, 0, 7,  2, 0, 0,  6, 0, 0, 
     
     0, 8, 5,  0, 0, 9,  1, 0, 0, 
@@ -55,6 +55,21 @@ describe('given an empty square and only one option can not go elsewhere in sect
 
         it('is the only option', () => {
             expect(result).toBe(1);
+        });
+    });
+});
+
+describe('given an empty square and only one option can not go elsewhere in sector', () => {
+    const x = 0;
+    const y = 3;
+    let result;
+    describe('when evaluating', () => {
+        beforeEach(() => {
+            result = Engine.evaluate(board, x, y);
+        });
+
+        it('is the only option', () => {
+            expect(result).toBe(5);
         });
     });
 });
