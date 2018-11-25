@@ -7,8 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "tsc --outDir dist src/sudoku.ts",
-    "test": "tsc --outDir dist src/sudoku.ts && tsc --outDir dist test/sudoku.spec.ts && jasmine dist/sudoku.spec.js"
+    "test": "tsc --outDir dist test/sudoku.spec.ts && jasmine dist/test/sudoku.spec.js"
   },
   "repository": {
     "type": "git",
