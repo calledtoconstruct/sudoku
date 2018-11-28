@@ -1,5 +1,75 @@
 
 
+export type VerticalHandler = (y: number) => void;
+export type HorizontalHandler = (x: number, y: number) => void;
+
+export class Sector {
+    private readonly options: number = this.width * this.height;
+
+    constructor(
+        readonly width: number,
+        readonly height: number
+    ) {
+    }
+
+    scan(sector: { x: number, y: number }, action: (a: number, b: number) => void): void {
+        for (let b: number = sector.y; b < sector.y + this.height; ++b) {
+            for (let a: number = sector.x; a < sector.x + this.width; ++a) {
+                action(a, b);
+            }
+        }
+    }
+}
+export class Board {
+    readonly sector: Sector = new Sector(this.width, this.height);
+    readonly options: number = this.width * this.height;
+
+    constructor(
+        readonly board: Array<number>,
+        readonly width: number,
+        readonly height: number
+    ) {
+        if (this.board.length !== Math.pow(this.options, 2)) {
+            throw new Error('Invalid board configuration.');
+        }
+    }
+
+    empty(x: number, y: number): boolean {
+        return this.board[y * this.options + x] === 0;
+    }
+
+    matches(x: number, y: number, option: number): boolean {
+        return this.board[y * this.options + x] === option;
+    }
+
+    traverse(action: (a: number) => void): void {
+        for (let a: number = 0; a < this.options; ++a) {
+            action(a);
+        }
+    }
+
+    get(x: number, y: number): number {
+        return this.board[y * this.options + x];
+    }
+
+    set(x: number, y: number, option: number): void {
+        this.board[y * this.options + x] = option;
+    }
+
+    scan(vertical: VerticalHandler, horizontal: HorizontalHandler): void {
+        for (let y: number = 0; y < this.options; ++y) {
+            for (let x: number = 0; x < this.options; ++x) {
+                horizontal(x, y);
+            }
+            vertical(y);
+        }
+    }
+
+    remaining(): number {
+        return this.board.reduce((count: number, current: number): number => count + ((current === 0) ? 1 : 0), 0);
+    }
+}
+
 export class Result {
     constructor(
         readonly result: 'invalid' | 'valid' | 'known' | 'unknown',
@@ -9,62 +79,50 @@ export class Result {
 }
 
 export class Engine {
-    private static empty(board: Array<number>, x: number, y: number): boolean {
-        return board[y * 9 + x] === 0;
+    constructor(
+        readonly board: Board
+    ) {
+
     }
 
-    private static limit(options: Array<number>, board: Array<number>, x: number, y: number): Array<number> {
-        if (!Engine.empty(board, x, y)) {
+    private limit(options: Array<number>, x: number, y: number): Array<number> {
+        if (!this.board.empty(x, y)) {
             return options.filter((option: number): boolean => {
-                return board[y * 9 + x] !== option;
+                return !this.board.matches(x, y, option);
             });
         } else {
             return options;
         }
     }
 
-    private static sector(x: number, y: number): { x: number, y: number } {
-        const sector: { x: number, y: number } = {
-            x: Math.floor(x / 3) * 3,
-            y: Math.floor(y / 3) * 3
+    private sector(x: number, y: number): { x: number, y: number } {
+        const sector: Sector = this.board.sector;
+        return {
+            x: Math.floor(x / sector.width) * sector.width,
+            y: Math.floor(y / sector.height) * sector.height
         };
-
-        return sector;
     }
 
-    private static traverse(action: (a: number) => void): void {
-        for (let a: number = 0; a < 9; ++a) {
-            action(a);
-        }
-    }
+    private options(x: number, y: number): Array<number> {
+        let options: Array<number> = new Array<number>();
+        this.board.traverse((a: number) => options.push(a + 1));
 
-    private static scan(sector: { x: number, y: number }, action: (a: number, b: number) => void): void {
-        for (let b: number = sector.y; b < sector.y + 3; ++b) {
-            for (let a: number = sector.x; a < sector.x + 3; ++a) {
-                action(a, b);
-            }
-        }
-    }
+        this.board.traverse((a: number) => options = this.limit(options, a, y));
+        this.board.traverse((a: number) => options = this.limit(options, x, a));
 
-    private static options(board: Array<number>, x: number, y: number): Array<number> {
-        let options: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const sector: { x: number, y: number } = this.sector(x, y);
 
-        Engine.traverse((a: number) => options = Engine.limit(options, board, a, y));
-        Engine.traverse((a: number) => options = Engine.limit(options, board, x, a));
-
-        const sector: { x: number, y: number } = Engine.sector(x, y);
-
-        Engine.scan(sector, (a: number, b: number) => options = Engine.limit(options, board, a, b));
+        this.board.sector.scan(sector, (a: number, b: number) => options = this.limit(options, a, b));
 
         return options;
     }
 
-    static evaluate(board: Array<number>, x: number, y: number): Result {
-        if (!Engine.empty(board, x, y)) {
-            return new Result('known', board[y * 9 + x]);
+    evaluate(x: number, y: number): Result {
+        if (!this.board.empty(x, y)) {
+            return new Result('known', this.board.get(x, y));
         }
 
-        const options: Array<number> = Engine.options(board, x, y);
+        const options: Array<number> = this.options(x, y);
 
         if (options.length === 1) {
             return new Result('valid', options[0]);
@@ -72,12 +130,12 @@ export class Engine {
 
         let community: Array<number> = [...options];
 
-        const sector: { x: number, y: number } = Engine.sector(x, y);
+        const sector: { x: number, y: number } = this.sector(x, y);
 
-        Engine.scan(sector, (a: number, b: number) => {
+        this.board.sector.scan(sector, (a: number, b: number) => {
             if (a !== x || b !== y) {
-                if (Engine.empty(board, a, b)) {
-                    const elsewhere: Array<number> = Engine.options(board, a, b);
+                if (this.board.empty(a, b)) {
+                    const elsewhere: Array<number> = this.options(a, b);
                     elsewhere.forEach((c: number): void => {
                         community = community.filter((d: number): boolean => c !== d);
                     });
@@ -91,10 +149,10 @@ export class Engine {
 
         let row: Array<number> = [...options];
 
-        Engine.traverse((a: number): void => {
+        this.board.traverse((a: number): void => {
             if (a !== x) {
-                if (Engine.empty(board, a, y)) {
-                    const elsewhere: Array<number> = Engine.options(board, a, y);
+                if (this.board.empty(a, y)) {
+                    const elsewhere: Array<number> = this.options(a, y);
                     elsewhere.forEach((b: number): void => {
                         row = row.filter((c: number): boolean => b !== c);
                     });
@@ -108,10 +166,10 @@ export class Engine {
 
         let column: Array<number> = [...options];
 
-        Engine.traverse((a: number): void => {
+        this.board.traverse((a: number): void => {
             if (a !== y) {
-                if (Engine.empty(board, x, a)) {
-                    const elsewhere: Array<number> = Engine.options(board, x, a);
+                if (this.board.empty(x, a)) {
+                    const elsewhere: Array<number> = this.options(x, a);
                     elsewhere.forEach((b: number): void => {
                         column = column.filter((c: number): boolean => b !== c);
                     });

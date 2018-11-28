@@ -1,9 +1,9 @@
 /*
 global describe, it, expect, beforeEach
 */
-import { Engine, Result } from '../src/sudoku';
+import { Board, Engine, Result } from '../src/sudoku';
 
-const board: Array<number> = [
+const board: Board = new Board([
     9, 0, 6,  3, 4, 0,  8, 1, 0,
     0, 5, 1,  7, 0, 0,  3, 0, 0,
     4, 7, 0,  0, 9, 1,  0, 0, 5,
@@ -15,15 +15,16 @@ const board: Array<number> = [
     0, 8, 5,  0, 0, 9,  1, 0, 0,
     0, 3, 4,  0, 6, 0,  0, 0, 9,
     0, 1, 0,  5, 0, 8,  7, 0, 6,
-];
+], 3, 3);
 
 describe('given a non empty square', () => {
+    const engine: Engine = new Engine(board);
     const x: number = 0;
     const y: number = 0;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(board, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is known', () => {
@@ -37,12 +38,13 @@ describe('given a non empty square', () => {
 });
 
 describe('given an empty square and all but one value exist', () => {
+    const engine: Engine = new Engine(board);
     const x: number = 0;
     const y: number = 8;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(board, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is valid', () => {
@@ -56,12 +58,13 @@ describe('given an empty square and all but one value exist', () => {
 });
 
 describe('given an empty square and only one option can not go elsewhere in sector', () => {
+    const engine: Engine = new Engine(board);
     const x: number = 8;
     const y: number = 4;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(board, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is valid', () => {
@@ -75,12 +78,13 @@ describe('given an empty square and only one option can not go elsewhere in sect
 });
 
 describe('given an empty square and only one option can not go elsewhere in row', () => {
+    const engine: Engine = new Engine(board);
     const x: number = 0;
     const y: number = 3;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(board, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is valid', () => {
@@ -93,7 +97,7 @@ describe('given an empty square and only one option can not go elsewhere in row'
     });
 });
 
-const expert: Array<number> = [
+const expert: Board = new Board([
     0, 0, 0,  0, 3, 0,  0, 0, 0,
     1, 2, 0,  7, 4, 0,  0, 0, 0,
     0, 0, 0,  1, 0, 0,  0, 0, 4,
@@ -105,15 +109,16 @@ const expert: Array<number> = [
     7, 0, 0,  9, 0, 0,  0, 0, 2,
     4, 6, 0,  0, 0, 0,  8, 3, 0,
     9, 0, 7,  0, 0, 0,  0, 0, 9,
-];
+], 3, 3);
 
 describe('given an empty square and there are four options', () => {
+    const engine: Engine = new Engine(expert);
     const x: number = 6;
     const y: number = 1;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(expert, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is unknown', () => {
@@ -127,12 +132,13 @@ describe('given an empty square and there are four options', () => {
 });
 
 describe('given an empty square and no valid options exist', () => {
+    const engine: Engine = new Engine(expert);
     const x: number = 0;
     const y: number = 5;
     let result: Result;
     describe('when evaluating', () => {
         beforeEach(() => {
-            result = Engine.evaluate(expert, x, y);
+            result = engine.evaluate(x, y);
         });
 
         it('is invalid', () => {
