@@ -1,3 +1,4 @@
+import math
 import logging
 
 def all_options():
@@ -28,6 +29,20 @@ def column(board, x):
         options.remove(current)
     return options
 
+def sector(board, x, y):
+    options = all_options()
+    used = []
+    across = math.floor(x / 2) * 2
+    down = math.floor(y / 2) * 2
+    for b in range(down, down + 2):
+        for a in range(across, across + 2):
+            current = get(board, a, b)
+            if current != 0:
+                used.append(current)
+    for current in used:
+        options.remove(current)
+    return options
+
 def evaluate(board, x, y):
     current = get(board, x, y)
     if current != 0:
@@ -40,4 +55,8 @@ def evaluate(board, x, y):
     logging.info(column_options)
     if len(column_options) == 1:
         return 'valid', column_options[0]
+    sector_options = sector(board, x, y)
+    logging.info(sector_options)
+    if len(sector_options) == 1:
+        return 'valid', sector_options[0]
     return 'invalid', 0
