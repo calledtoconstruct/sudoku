@@ -55,10 +55,10 @@ def test_given_cell_is_empty_and_only_one_option_exists_in_sector_when_evaluatin
 def test_given_cell_is_empty_and_multiple_options_exists_when_evaluating_then_unknown_is_returned():
     board = [
         0, 2,  0, 4,
-        4, 0,  2, 1,
+        4, 0,  2, 0,
 
         0, 4,  1, 2,
-        2, 1,  4, 3
+        2, 0,  4, 3
     ]
     result, value = evaluate(board, 0, 0)
     assert(result == 'unknown')
@@ -140,3 +140,21 @@ def test_given_an_incomplete_board_when_calculating_the_remaining_cells_then_cou
     ]
     count = remaining(board)
     assert(count == 43)
+
+def test_given_an_empty_cell_and_one_option_cannot_go_elsewhere_when_evaluating_then_valid_is_returned():
+    board = [
+        9, 0, 6,  3, 4, 0,  8, 1, 0,
+        0, 5, 1,  7, 0, 0,  3, 0, 0,
+        4, 7, 0,  0, 9, 1,  0, 0, 5,
+
+        0, 0, 0,  9, 0, 3,  0, 0, 2,
+        0, 0, 2,  0, 8, 7,  0, 0, 0,
+        1, 0, 7,  2, 0, 0,  6, 0, 0,
+
+        0, 8, 5,  0, 0, 9,  1, 0, 0,
+        0, 3, 4,  0, 6, 0,  0, 0, 9,
+        0, 1, 0,  5, 0, 8,  7, 0, 6
+    ]
+    result, value = evaluate(board, 8, 4)
+    assert(result == 'valid')
+    assert(value == 1)
