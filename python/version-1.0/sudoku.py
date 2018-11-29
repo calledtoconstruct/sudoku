@@ -34,6 +34,9 @@ def sector(board, x, y):
                 used.append(current)
     return used
 
+def update(board, x, y, value):
+    board[y * 4 + x] = value
+
 def evaluate(board, x, y):
     options = all_options()
     current = get(board, x, y)
@@ -61,5 +64,5 @@ def evaluate(board, x, y):
     if len(options) == 1:
         return 'valid', options[0]
     if len(options) > 1:
-        return 'unknown', 0
+        return 'unknown', options
     return 'invalid', 0
