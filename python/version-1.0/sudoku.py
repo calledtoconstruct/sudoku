@@ -17,6 +17,17 @@ def row(board, y):
         options.remove(current)
     return options
 
+def column(board, x):
+    options = all_options()
+    used = []
+    for y in range(4):
+        current = get(board, x, y)
+        if current != 0:
+            used.append(current)
+    for current in used:
+        options.remove(current)
+    return options
+
 def evaluate(board, x, y):
     current = get(board, x, y)
     if current != 0:
@@ -25,4 +36,8 @@ def evaluate(board, x, y):
     logging.info(row_options)
     if len(row_options) == 1:
         return 'valid', row_options[0]
+    column_options = column(board, x)
+    logging.info(column_options)
+    if len(column_options) == 1:
+        return 'valid', column_options[0]
     return 'invalid', 0
