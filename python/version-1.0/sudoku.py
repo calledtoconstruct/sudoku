@@ -8,29 +8,22 @@ def get(board, x, y):
     return board[y * 4 + x]
 
 def row(board, y):
-    options = all_options()
     used = []
     for x in range(4):
         current = get(board, x, y)
         if current != 0:
             used.append(current)
-    for current in used:
-        options.remove(current)
-    return options
+    return used
 
 def column(board, x):
-    options = all_options()
     used = []
     for y in range(4):
         current = get(board, x, y)
         if current != 0:
             used.append(current)
-    for current in used:
-        options.remove(current)
-    return options
+    return used
 
 def sector(board, x, y):
-    options = all_options()
     used = []
     across = math.floor(x / 2) * 2
     down = math.floor(y / 2) * 2
@@ -39,24 +32,34 @@ def sector(board, x, y):
             current = get(board, a, b)
             if current != 0:
                 used.append(current)
-    for current in used:
-        options.remove(current)
-    return options
+    return used
 
 def evaluate(board, x, y):
+    options = all_options()
     current = get(board, x, y)
     if current != 0:
         return 'known', current
-    row_options = row(board, y)
-    logging.info(row_options)
-    if len(row_options) == 1:
-        return 'valid', row_options[0]
-    column_options = column(board, x)
-    logging.info(column_options)
-    if len(column_options) == 1:
-        return 'valid', column_options[0]
-    sector_options = sector(board, x, y)
-    logging.info(sector_options)
-    if len(sector_options) == 1:
-        return 'valid', sector_options[0]
+    row_exclusions = row(board, y)
+    for current in row_exclusions:
+        if current in options:
+            options.remove(current)
+    logging.info(options)
+    if len(options) == 1:
+        return 'valid', options[0]
+    column_exclusions = column(board, x)
+    for current in column_exclusions:
+        if current in options:
+            options.remove(current)
+    logging.info(options)
+    if len(options) == 1:
+        return 'valid', options[0]
+    sector_exclusions = sector(board, x, y)
+    for current in sector_exclusions:
+        if current in options:
+            options.remove(current)
+    logging.info(options)
+    if len(options) == 1:
+        return 'valid', options[0]
+    if len(options) > 1:
+        return 'unknown', 0
     return 'invalid', 0

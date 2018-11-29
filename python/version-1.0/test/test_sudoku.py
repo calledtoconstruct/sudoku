@@ -45,3 +45,15 @@ def test_given_cell_is_empty_and_only_one_option_exists_in_sector_then_valid_is_
     result, value = evaluate(board, 0, 0)
     assert(result == 'valid')
     assert(value == 1)
+
+def test_given_cell_is_empty_and_multiple_options_exists_then_unknown_is_returned():
+    board = [
+        0, 2,  0, 4,
+        4, 0,  2, 1,
+
+        0, 4,  1, 2,
+        2, 1,  4, 3
+    ]
+    result, value = evaluate(board, 0, 0)
+    assert(result == 'unknown')
+    assert(value == 0)
