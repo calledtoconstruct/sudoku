@@ -1,13 +1,16 @@
 import pytest
 import logging
-from sudoku import evaluate, update
+from sudoku import evaluate, update, size
 
 logging.basicConfig(level=logging.INFO)
 
 def test_given_cell_is_already_filled_when_evaluating_then_known_is_returned():
     board = [
         1, 2,  3, 4,
-        4, 3,  2, 1
+        4, 3,  2, 1,
+
+        3, 4,  1, 2,
+        2, 1,  4, 3
     ]
     result, value = evaluate(board, 1, 1)
     assert(result == 'known')
@@ -16,7 +19,10 @@ def test_given_cell_is_already_filled_when_evaluating_then_known_is_returned():
 def test_given_cell_is_empty_and_only_one_option_exists_horizontally_when_evaluating_then_valid_is_returned():
     board = [
         0, 2,  3, 4,
-        4, 3,  2, 1
+        0, 3,  2, 1,
+
+        3, 4,  1, 2,
+        2, 1,  4, 3
     ]
     result, value = evaluate(board, 0, 0)
     assert(result == 'valid')
@@ -73,3 +79,47 @@ def test_given_cell_is_empty_when_updating_its_value_and_evaluating_then_known_i
     result, value = evaluate(board, 2, 0)
     assert(result == 'known')
     assert(value == 3)
+
+def test_given_arbitrary_board_when_determining_size_then_rows_columns_and_options_are_computed():
+    board = [
+        1, 2,  3, 4,
+        4, 3,  2, 1,
+
+        3, 4,  1, 2,
+        2, 1,  4, 3
+    ]
+    rows, columns, options = size(board)
+    assert(rows == 2)
+    assert(columns == 2)
+    assert(options == 4)
+    board = [
+        1, 2, 3,  4, 5, 6,
+        6, 5, 4,  3, 2, 1,
+
+        3, 4, 5,  6, 1, 2,
+        2, 1, 6,  5, 4, 3,
+
+        4, 3, 1,  2, 6, 5,
+        5, 6, 2,  1, 3, 4
+    ]
+    rows, columns, options = size(board)
+    assert(rows == 2)
+    assert(columns == 3)
+    assert(options == 6)
+    board = [
+        1, 2, 3, 4,  5, 6, 7, 8,
+        7, 8, 6, 5,  4, 3, 2, 1,
+
+        3, 4, 5, 6,  1, 2, 8, 7,
+        8, 7, 2, 1,  6, 5, 4, 3,
+
+        4, 3, 1, 2,  7, 8, 5, 6,
+        5, 6, 7, 8,  3, 4, 1, 2,
+
+        2, 1, 4, 3,  8, 7, 6, 5,
+        6, 5, 8, 7,  2, 1, 3, 4
+    ]
+    rows, columns, options = size(board)
+    assert(rows == 2)
+    assert(columns == 4)
+    assert(options == 8)

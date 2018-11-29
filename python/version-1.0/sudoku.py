@@ -1,44 +1,61 @@
 import math
 import logging
 
-def all_options():
-    return [1, 2, 3, 4]
+def size(board):
+    options = math.floor(math.sqrt(len(board)))
+    rows = math.floor(math.sqrt(options))
+    columns = math.floor(options / rows)
+    return rows, columns, options
+
+def all_options(board):
+    rows, columns, count = size(board)
+    options = []
+    for option in range(count):
+        options.append(option + 1)
+    return options
 
 def get(board, x, y):
-    return board[y * 4 + x]
+    rows, columns, options = size(board)
+    return board[y * options + x]
 
 def row(board, y):
+    rows, columns, options = size(board)
     used = []
-    for x in range(4):
+    for x in range(options):
         current = get(board, x, y)
         if current != 0:
             used.append(current)
     return used
 
 def column(board, x):
+    rows, columns, options = size(board)
     used = []
-    for y in range(4):
+    for y in range(options):
         current = get(board, x, y)
         if current != 0:
             used.append(current)
     return used
 
 def sector(board, x, y):
+    rows, columns, options = size(board)
     used = []
-    across = math.floor(x / 2) * 2
-    down = math.floor(y / 2) * 2
-    for b in range(down, down + 2):
-        for a in range(across, across + 2):
+    sectors_across = math.floor(options / columns)
+    across = math.floor(x / sectors_across) * sectors_across
+    sectors_down = math.floor(options / rows)
+    down = math.floor(y / sectors_down) * sectors_down
+    for b in range(down, down + rows):
+        for a in range(across, across + columns):
             current = get(board, a, b)
             if current != 0:
                 used.append(current)
     return used
 
 def update(board, x, y, value):
-    board[y * 4 + x] = value
+    rows, columns, options = size(board)
+    board[y * options + x] = value
 
 def evaluate(board, x, y):
-    options = all_options()
+    options = all_options(board)
     current = get(board, x, y)
     if current != 0:
         return 'known', current
