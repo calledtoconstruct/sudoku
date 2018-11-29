@@ -1,6 +1,6 @@
 import pytest
 import logging
-from sudoku import evaluate, update, size
+from sudoku import evaluate, update, size, remaining
 
 logging.basicConfig(level=logging.INFO)
 
@@ -123,3 +123,20 @@ def test_given_arbitrary_board_when_determining_size_then_rows_columns_and_optio
     assert(rows == 2)
     assert(columns == 4)
     assert(options == 8)
+
+def test_given_an_incomplete_board_when_calculating_the_remaining_cells_then_count_is_correct():
+    board = [
+        9, 0, 6,  3, 4, 0,  8, 1, 0,
+        0, 5, 1,  7, 0, 0,  3, 0, 0,
+        4, 7, 0,  0, 9, 1,  0, 0, 5,
+
+        0, 0, 0,  9, 0, 3,  0, 0, 2,
+        0, 0, 2,  0, 8, 7,  0, 0, 0,
+        1, 0, 7,  2, 0, 0,  6, 0, 0,
+
+        0, 8, 5,  0, 0, 9,  1, 0, 0,
+        0, 3, 4,  0, 6, 0,  0, 0, 9,
+        0, 1, 0,  5, 0, 8,  7, 0, 6
+    ]
+    count = remaining(board)
+    assert(count == 43)

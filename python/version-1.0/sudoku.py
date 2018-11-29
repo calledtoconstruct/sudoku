@@ -83,3 +83,12 @@ def evaluate(board, x, y):
     if len(options) > 1:
         return 'unknown', options
     return 'invalid', 0
+
+def remaining(board):
+    rows, columns, options = size(board)
+    count = 0
+    for y in range(options):
+        for x in range(options):
+            if get(board, x, y) == 0:
+                count += 1
+    return count
