@@ -89,3 +89,14 @@ def test_given_empty_cell_and_all_value_known_vertically_when_evaluating_then_mi
     ]
     result = evaluate(board, 0, 0)
     assert(result == 4)
+
+def test_given_empty_cell_and_all_value_known_within_sector_when_evaluating_then_missing_value_is_returned():
+    board = [
+        0, 3,  0, 0,
+        4, 1,  0, 0,
+        
+        0, 0,  0, 0,
+        0, 0,  0, 0
+    ]
+    result = evaluate(board, 0, 0)
+    assert(result == 2)
