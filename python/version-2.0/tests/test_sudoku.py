@@ -1,4 +1,5 @@
 import pytest
+import random
 
 from sudoku import size, evaluate
 
@@ -39,3 +40,16 @@ def test_given_nonempty_cell_when_evaluating_then_the_existing_value_is_returned
     ]
     result = evaluate(board, 0, 0)
     assert(result == 1)
+
+def test_given_nonempty_cell_when_evaluating_then_the_existing_random_value_is_returned():
+    value = random.randint(2, 4)
+    print(value)
+    board = [
+        value, 0,  0, 0,
+        0, 0,  0, 0,
+        
+        0, 0,  0, 0,
+        0, 0,  0, 0
+    ]
+    result = evaluate(board, 0, 0)
+    assert(result == value)
