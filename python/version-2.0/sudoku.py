@@ -6,4 +6,4 @@ def size(board):
     return width, height
 
 def evaluate(board, x, y):
-    return 0
+    return 1
