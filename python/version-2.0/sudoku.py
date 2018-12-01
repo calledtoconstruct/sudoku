@@ -25,6 +25,15 @@ def row_contains(board, y):
             available.remove(value)
     return available
 
+def column_contains(board, x):
+    width, height = size(board)
+    available = options(width)
+    for y in range(width):
+        value = get(board, x, y, width, height)
+        if value != 0:
+            available.remove(value)
+    return available
+
 def evaluate(board, x, y):
     value = get(board, x, y)
     if value != 0:
@@ -32,3 +41,6 @@ def evaluate(board, x, y):
     row = row_contains(board, y)
     if len(row) == 1:
         return row[0]
+    column = column_contains(board, x)
+    if len(column) == 1:
+        return column[0]

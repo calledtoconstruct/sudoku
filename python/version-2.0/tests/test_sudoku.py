@@ -85,7 +85,7 @@ def test_given_empty_cell_and_all_value_known_vertically_when_evaluating_then_mi
         2, 0,  0, 0,
         
         3, 0,  0, 0,
-        4, 0,  0, 0
+        1, 0,  0, 0
     ]
     result = evaluate(board, 0, 0)
-    assert(result == 1)
+    assert(result == 4)
