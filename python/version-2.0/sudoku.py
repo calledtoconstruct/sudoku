@@ -13,3 +13,4 @@ def evaluate(board, x, y):
     value = get(board, x, y)
     if value != 0:
         return value
+    

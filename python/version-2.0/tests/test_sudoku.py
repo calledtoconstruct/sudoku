@@ -67,3 +67,14 @@ def test_given_nonempty_cell_when_evaluating_arbitrary_size_board_then_the_exist
     ]
     result = evaluate(board, 5, 5)
     assert(result == value)
+
+def test_given_empty_cell_and_all_value_known_horizontally_when_evaluating_then_missing_value_is_returned():
+    board = [
+        0, 2,  3, 4,
+        0, 0,  0, 0,
+        
+        0, 0,  0, 0,
+        0, 0,  0, 0
+    ]
+    result = evaluate(board, 0, 0)
+    assert(result == 1)
