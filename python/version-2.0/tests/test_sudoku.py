@@ -43,7 +43,6 @@ def test_given_nonempty_cell_when_evaluating_then_the_existing_value_is_returned
 
 def test_given_nonempty_cell_when_evaluating_then_the_existing_random_value_is_returned():
     value = random.randint(2, 4)
-    print(value)
     board = [
         value, 0,  0, 0,
         0, 0,  0, 0,
@@ -52,4 +51,19 @@ def test_given_nonempty_cell_when_evaluating_then_the_existing_random_value_is_r
         0, 0,  0, 0
     ]
     result = evaluate(board, 0, 0)
+    assert(result == value)
+
+def test_given_nonempty_cell_when_evaluating_arbitrary_size_board_then_the_existing_random_value_is_returned():
+    value = random.randint(2, 4)
+    board = [
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, value
+    ]
+    result = evaluate(board, 5, 5)
     assert(result == value)
