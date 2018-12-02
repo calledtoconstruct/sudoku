@@ -5,6 +5,12 @@ def size(board):
     height = math.floor(len(board) / width)
     return width, height
 
+def sector_size(board):
+    sqrt = math.sqrt(math.sqrt(len(board)))
+    horizontally = math.floor(sqrt)
+    vertically = math.ceil(sqrt)
+    return horizontally, vertically
+
 def options(width):
     options = []
     for x in range(1, width + 1):
@@ -34,6 +40,21 @@ def column_contains(board, x):
             available.remove(value)
     return available
 
+def sector_contains(board, x, y):
+    width, height = size(board)
+    available = options(width)
+    horizontally, vertically = sector_size(board)
+    cells_horizontally = math.floor(width / horizontally)
+    a = math.floor(x / cells_horizontally) * cells_horizontally
+    cells_vertically = math.floor(height / vertically)
+    b = math.floor(y / cells_vertically) * cells_vertically
+    for vertical_index in range(b, b + cells_vertically + 1):
+        for horizontal_index in range(a, a + cells_horizontally + 1):
+            value = get(board, horizontal_index, vertical_index)
+            if value != 0:
+                available.remove(value)
+    return available
+
 def evaluate(board, x, y):
     value = get(board, x, y)
     if value != 0:
@@ -44,3 +65,11 @@ def evaluate(board, x, y):
     column = column_contains(board, x)
     if len(column) == 1:
         return column[0]
+    sector = sector_contains(board, x, y)
+    if len(sector) == 1:
+        return sector[0]
+    # for value in sector:
+    #     if value not in column:
+    #         sector.remove(value)
+    # if len(sector) == 1:
+    #     return sector[0]

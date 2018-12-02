@@ -100,3 +100,17 @@ def test_given_empty_cell_and_all_value_known_within_sector_when_evaluating_then
     ]
     result = evaluate(board, 0, 0)
     assert(result == 2)
+
+def test_given_empty_cell_and_all_values_known_within_sector_when_evaluating_arbitrary_size_board_then_missing_value_is_returned():
+    board = [
+        1, 5, 6,  0, 0, 0,
+        2, 4, 0,  0, 0, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, 0
+    ]
+    result = evaluate(board, 2, 1)
+    assert(result == 3)
