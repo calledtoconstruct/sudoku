@@ -126,4 +126,10 @@ def guess(board, width, height, x, y, action, ignore = []):
     option = 0
     copy_of_board = board.copy()
     set(copy_of_board, width, x, y, options[option])
-    action(copy_of_board, width, height, x, y)
+    updated = True
+    while updated:
+        updated = False
+        result = action(copy_of_board, width, height, x, y)
+        if result:
+            updated = True
+    # recursively call guess??

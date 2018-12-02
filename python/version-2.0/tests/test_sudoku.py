@@ -208,14 +208,18 @@ def test_given_empty_cell_where_only_one_option_remains_after_scanning_sector_th
 played = 0
 played_board = []
 
-def mock_play_returns_true(board, width, height, x, y, ignore = []):
+def mock_play_returns_true_then_false(board, width, height, x, y, ignore = []):
     global played
-    played += 1
     global played_board
+    played += 1
     played_board = board
-    return True
+    if played == 1:
+        return True
+    return False
 
 def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
+    global played
+    global played_board
     board = [
         0, 0,  1, 0,
         2, 0,  0, 0,
@@ -224,11 +228,13 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_play_returns_true)
-    assert(played == 1)
+    guess(board, width, height, 1, 0, mock_play_returns_true_then_false)
+    assert(played == 2)
     result = get(played_board, width, 1, 0)
     assert(result == 3)
 
+    played = 0
+    played_board = []
     board = [
         0, 0,  3, 0,
         2, 0,  0, 0,
@@ -237,23 +243,23 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_play_returns_true)
+    guess(board, width, height, 1, 0, mock_play_returns_true_then_false)
     assert(played == 2)
     result = get(played_board, width, 1, 0)
     assert(result == 1)
 
-def test_given_empty_cell_that_requires_a_guess_when_guessing_recursively_then_play_fills_in_addition_cells():
-    board = [
-        0, 0,  3, 0,
-        2, 0,  0, 0,
+# def test_given_empty_cell_that_requires_a_guess_when_guessing_recursively_then_play_fills_in_addition_cells():
+#     board = [
+#         0, 0,  3, 0,
+#         2, 0,  0, 0,
         
-        3, 2,  0, 0,
-        1, 3,  0, 0
-    ]
-    width, height = size(board)
-    guess(board, width, height, 1, 0, play)
-    result = get(played_board, width, 1, 1)
-    assert(result == 4)
+#         3, 2,  0, 0,
+#         1, 3,  0, 0
+#     ]
+#     width, height = size(board)
+#     guess(board, width, height, 1, 0, play)
+#     result = get(played_board, width, 1, 1)
+#     assert(result == 4)
 
 # Test plans:
 # Call the guessing engine, ensure that it calls play, and attempts the second guess when play returns false
