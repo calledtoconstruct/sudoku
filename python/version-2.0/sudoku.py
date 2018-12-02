@@ -122,4 +122,6 @@ def play(board, width, height, x, y, ignore = []):
     return changes_were_made
 
 def guess(board, width, height, x, y, action, ignore = []):
-    action(board, width, height, x, y)
+    copy_of_board = board.copy()
+    set(copy_of_board, width, x, y, 3)
+    action(copy_of_board, width, height, x, y)
