@@ -56,6 +56,7 @@ def sector_contains(board, x, y):
     return available
 
 def evaluate(board, x, y):
+    width, height = size(board)
     value = get(board, x, y)
     if value != 0:
         return value
@@ -68,8 +69,9 @@ def evaluate(board, x, y):
     sector = sector_contains(board, x, y)
     if len(sector) == 1:
         return sector[0]
-    # for value in sector:
-    #     if value not in column:
-    #         sector.remove(value)
-    # if len(sector) == 1:
-    #     return sector[0]
+    available = []
+    for value in options(width):
+        if value in row and value in column and value in sector:
+            available.append(value)
+    if len(available) == 1:
+        return available[0]
