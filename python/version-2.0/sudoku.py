@@ -13,60 +13,74 @@ def sector_size(board):
 
 def options(width):
     options = []
-    for x in range(1, width + 1):
-        options.append(x)
+    for x in range(width):
+        options.append(x + 1)
     return options
 
-def get(board, x, y, width = 0, height = 0):
-    if width == 0 or height == 0:
-        width, height = size(board)
+def get(board, width, x, y):
     return board[y * width + x]
 
-def row_contains(board, y):
-    width, height = size(board)
+def row_contains(board, width, y):
     available = options(width)
     for x in range(width):
-        value = get(board, x, y, width, height)
+        value = get(board, width, x, y)
         if value != 0:
             available.remove(value)
     return available
 
-def column_contains(board, x):
-    width, height = size(board)
+def column_contains(board, width, x):
     available = options(width)
     for y in range(width):
-        value = get(board, x, y, width, height)
+        value = get(board, width, x, y)
         if value != 0:
             available.remove(value)
     return available
 
-def sector_contains(board, x, y):
-    width, height = size(board)
-    available = options(width)
+def scan_sector(board, width, height, x, y, action, available, ignore = []):
     horizontally, vertically = sector_size(board)
     cells_horizontally = math.floor(width / horizontally)
     a = math.floor(x / cells_horizontally) * cells_horizontally
     cells_vertically = math.floor(height / vertically)
     b = math.floor(y / cells_vertically) * cells_vertically
-    for vertical_index in range(b, b + cells_vertically + 1):
-        for horizontal_index in range(a, a + cells_horizontally + 1):
-            value = get(board, horizontal_index, vertical_index)
-            if value != 0:
-                available.remove(value)
+    for vertical_index in range(b, b + cells_vertically):
+        for horizontal_index in range(a, a + cells_horizontally):
+            if horizontal_index != x or vertical_index != y:
+                action(board, width, height, horizontal_index, vertical_index, available)
+
+def sector_contains(board, width, height, x, y):
+    available = options(width)
+    scan_sector(board, width, height, x, y, exclude_used_options, available)
     return available
 
-def evaluate(board, x, y):
-    width, height = size(board)
-    value = get(board, x, y)
+def exclude_used_options(board, width, height, x, y, available):
+    value = get(board, width, x, y)
+    if value != 0:
+        available.remove(value)
+
+def accumulate_options(board, width, height, x, y, available):
+    value = get(board, width, x, y)
+    if value != 0:
+        return
+    options = evaluate(board, width, height, x, y, True)
+    if type(options) is list:
+        for value in options:
+            if value in available:
+                available.remove(value)
+    elif type(options) is int:
+        if options in available:
+            available.remove(options)
+
+def evaluate(board, width, height, x, y, quick = False):
+    value = get(board, width, x, y)
     if value != 0:
         return value
-    row = row_contains(board, y)
+    row = row_contains(board, width, y)
     if len(row) == 1:
         return row[0]
-    column = column_contains(board, x)
+    column = column_contains(board, width, x)
     if len(column) == 1:
         return column[0]
-    sector = sector_contains(board, x, y)
+    sector = sector_contains(board, width, height, x, y)
     if len(sector) == 1:
         return sector[0]
     available = []
@@ -75,29 +89,34 @@ def evaluate(board, x, y):
             available.append(value)
     if len(available) == 1:
         return available[0]
+
+    if quick:
+        return available
+
+    scan_sector(board, width, height, x, y, accumulate_options, available)
+    if len(available) == 1:
+        return available[0]
+
     return 0
 
-def set(board, x, y, value, width = 0, height = 0):
-    if width == 0 or height == 0:
-        width, height = size(board)
+def set(board, width, x, y, value):
     board[y * width + x] = value
 
-def play(board, x, y, ignore = []):
-    if get(board, x, y) != 0:
+def play(board, width, height, x, y, ignore = []):
+    if get(board, width, x, y) != 0:
         return False
     ignore.append([x, y])
-    width, height = size(board)
     changes_were_made = False
     updated = True
     while updated:
         updated = False
-        value = evaluate(board, x, y)
+        value = evaluate(board, width, height, x, y)
         if value != 0:
-            set(board, x, y, value)
+            set(board, width, x, y, value)
             return True
         for index in range(width):
             if [index, y] not in ignore:
-                if play(board, index, y, ignore):
+                if play(board, width, height, index, y, ignore):
                     updated = True
                     changes_were_made = True
     return changes_were_made
