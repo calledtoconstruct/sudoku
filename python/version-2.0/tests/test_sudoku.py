@@ -129,6 +129,21 @@ def test_given_empty_cell_and_all_values_known_across_down_and_in_sector_when_ev
     result = evaluate(board, 2, 1)
     assert(result == 3)
 
+def test_given_empty_cell_and_all_values_known_across_down_and_in_sector_when_playing_then_missing_value_is_set():
+    board = [
+        4, 0, 6,  0, 0, 0,
+        0, 0, 0,  5, 2, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 0,  0, 0, 0,
+        
+        0, 0, 0,  0, 0, 0,
+        0, 0, 1,  0, 0, 0
+    ]
+    play(board, 2, 1)
+    result = get(board, 2, 1)
+    assert(result == 3)
+
 def test_given_empty_cell_where_almost_all_options_are_taken_when_evaluating_then_missing_value_is_returned():
     board = [
         4, 0, 6,  0, 1, 0,
@@ -141,5 +156,6 @@ def test_given_empty_cell_where_almost_all_options_are_taken_when_evaluating_the
         0, 0, 1,  0, 6, 0
     ]
     play(board, 2, 1)
+    print(board)
     result = get(board, 2, 1)
     assert(result == 3)

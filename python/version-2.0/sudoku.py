@@ -77,9 +77,27 @@ def evaluate(board, x, y):
         return available[0]
     return 0
 
-def play(board, x, y):
-    # ignore [x, y]
-    # recursive call to evaluate for any empty cell in the row
-    # recursive call to evaluate for any empty cell in the column
-    # recursive call to evaluate for any empty cell in the sector
-    return
+def set(board, x, y, value, width = 0, height = 0):
+    if width == 0 or height == 0:
+        width, height = size(board)
+    board[y * width + x] = value
+
+def play(board, x, y, ignore = []):
+    if get(board, x, y) != 0:
+        return False
+    ignore.append([x, y])
+    width, height = size(board)
+    changes_were_made = False
+    updated = True
+    while updated:
+        updated = False
+        value = evaluate(board, x, y)
+        if value != 0:
+            set(board, x, y, value)
+            return True
+        for index in range(width):
+            if [index, y] not in ignore:
+                if play(board, index, y, ignore):
+                    updated = True
+                    changes_were_made = True
+    return changes_were_made
