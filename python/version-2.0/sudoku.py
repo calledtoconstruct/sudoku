@@ -120,3 +120,6 @@ def play(board, width, height, x, y, ignore = []):
                     updated = True
                     changes_were_made = True
     return changes_were_made
+
+def guess(board, width, height, x, y, action, ignore = []):
+    action(board, width, height, x, y)

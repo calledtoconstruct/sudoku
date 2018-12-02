@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate, get, play, sector_size
+from sudoku import size, evaluate, get, play, sector_size, guess
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -204,3 +204,44 @@ def test_given_empty_cell_where_only_one_option_remains_after_scanning_sector_th
     width, height = size(board)
     result = evaluate(board, width, height, 8, 4)
     assert(result == 1)
+
+played = 0
+played_board = []
+
+def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
+
+    def mock_play_returns_true(board, width, height, x, y, ignore = []):
+        global played
+        played += 1
+        global played_board
+        played_board = board
+        return True
+
+    board = [
+        0, 0,  1, 0,
+        2, 0,  0, 0,
+        
+        3, 0,  0, 0,
+        1, 0,  0, 0
+    ]
+    
+    width, height = size(board)
+    guess(board, width, height, 1, 0, mock_play_returns_true)
+    assert(played == 1)
+    result = get(played_board, width, 1, 0)
+    assert(result == 3)
+
+# Test plans:
+# Call the guessing engine, ensure that it calls play, and attempts the second guess when play returns false
+# Call the guessing engine, ensure that it calls play, and continues playing when play returns true
+
+# Plans:
+# 1:
+# Pass the play method into the guess method so that a test can verify how the guess is performing
+# 2:
+# generate a guessing engine that makes use of the existing Play and Evaluate functions
+# need to be able to save and restore the state of the board before each guess is made
+# need to be able to iterate over the options for a location where a guess is required
+# guessing will be required once normal plays fail to complete the board
+# 3:
+# Pass the evaluate method into the play method so that a test can verify how the evaluate how the play is performing
