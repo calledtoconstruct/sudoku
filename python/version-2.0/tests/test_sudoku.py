@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate
+from sudoku import size, evaluate, get, play
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -140,5 +140,6 @@ def test_given_empty_cell_where_almost_all_options_are_taken_when_evaluating_the
         0, 0, 0,  0, 5, 0,
         0, 0, 1,  0, 6, 0
     ]
-    result = evaluate(board, 2, 1)
+    play(board, 2, 1)
+    result = get(board, 2, 1)
     assert(result == 3)

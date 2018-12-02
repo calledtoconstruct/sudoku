@@ -75,3 +75,11 @@ def evaluate(board, x, y):
             available.append(value)
     if len(available) == 1:
         return available[0]
+    return 0
+
+def play(board, x, y):
+    # ignore [x, y]
+    # recursive call to evaluate for any empty cell in the row
+    # recursive call to evaluate for any empty cell in the column
+    # recursive call to evaluate for any empty cell in the sector
+    return
