@@ -208,15 +208,14 @@ def test_given_empty_cell_where_only_one_option_remains_after_scanning_sector_th
 played = 0
 played_board = []
 
+def mock_play_returns_true(board, width, height, x, y, ignore = []):
+    global played
+    played += 1
+    global played_board
+    played_board = board
+    return True
+
 def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
-
-    def mock_play_returns_true(board, width, height, x, y, ignore = []):
-        global played
-        played += 1
-        global played_board
-        played_board = board
-        return True
-
     board = [
         0, 0,  1, 0,
         2, 0,  0, 0,
@@ -224,12 +223,25 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         3, 0,  0, 0,
         1, 0,  0, 0
     ]
-    
     width, height = size(board)
     guess(board, width, height, 1, 0, mock_play_returns_true)
     assert(played == 1)
     result = get(played_board, width, 1, 0)
     assert(result == 3)
+
+def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
+    board = [
+        0, 0,  3, 0,
+        2, 0,  0, 0,
+        
+        3, 0,  0, 0,
+        1, 0,  0, 0
+    ]
+    width, height = size(board)
+    guess(board, width, height, 1, 0, mock_play_returns_true)
+    assert(played == 1)
+    result = get(played_board, width, 1, 0)
+    assert(result == 1)
 
 # Test plans:
 # Call the guessing engine, ensure that it calls play, and attempts the second guess when play returns false
