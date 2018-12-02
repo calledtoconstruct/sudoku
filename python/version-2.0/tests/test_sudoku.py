@@ -229,7 +229,6 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
     result = get(played_board, width, 1, 0)
     assert(result == 3)
 
-def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
     board = [
         0, 0,  3, 0,
         2, 0,  0, 0,
@@ -239,9 +238,22 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
     ]
     width, height = size(board)
     guess(board, width, height, 1, 0, mock_play_returns_true)
-    assert(played == 1)
+    assert(played == 2)
     result = get(played_board, width, 1, 0)
     assert(result == 1)
+
+def test_given_empty_cell_that_requires_a_guess_when_guessing_recursively_then_play_fills_in_addition_cells():
+    board = [
+        0, 0,  3, 0,
+        2, 0,  0, 0,
+        
+        3, 2,  0, 0,
+        1, 3,  0, 0
+    ]
+    width, height = size(board)
+    guess(board, width, height, 1, 0, play)
+    result = get(played_board, width, 1, 1)
+    assert(result == 4)
 
 # Test plans:
 # Call the guessing engine, ensure that it calls play, and attempts the second guess when play returns false
