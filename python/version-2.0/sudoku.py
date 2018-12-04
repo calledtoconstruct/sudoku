@@ -139,5 +139,4 @@ def guess(board, width, height, x, y, action, ignore = []):
     # recursively call guess??
 
 def verify(board, width, height):
-    return True
-    
+    return False
