@@ -287,6 +287,18 @@ def test_given_an_invalid_row_on_a_partially_complete_board_when_verifying_then_
     result = verify(board, width, height)
     assert(result == False)
 
+def test_given_an_invalid_column_on_a_partially_complete_board_when_verifying_then_false_is_returned():
+    board = [
+        2, 1,  4, 3,
+        1, 0,  0, 0,
+        
+        3, 2,  1, 4,
+        2, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = verify(board, width, height)
+    assert(result == False)
+
 # Plans:
 #   Test board verification method to ensure that it catches
 # 

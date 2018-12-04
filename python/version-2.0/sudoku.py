@@ -139,4 +139,13 @@ def guess(board, width, height, x, y, action, ignore = []):
     # recursively call guess??
 
 def verify(board, width, height):
-    return False
+    for y in range(height):
+        available = options(width)
+        for x in range(width):
+            value = get(board, width, x, y)
+            if value != 0:
+                if value not in available:
+                    return False
+                else:
+                    available.remove(value)
+    return True
