@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate, get, play, sector_size, guess
+from sudoku import size, evaluate, get, play, sector_size, guess, verify
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -275,17 +275,21 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_recursively_then_p
     result = get(copy_of_board, width, 1, 1)
     assert(result == 3)
 
-# Test plans:
-# Call the guessing engine, ensure that it calls play, and attempts the second guess when play returns false
-# Call the guessing engine, ensure that it calls play, and continues playing when play returns true
+def test_given_an_invalid_row_on_a_partially_complete_board_when_verifying_then_false_is_returned():
+    board = [
+        2, 3,  4, 2,
+        0, 0,  0, 0,
+        
+        3, 2,  1, 4,
+        1, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = verify(board, width, height)
+    assert(result == False)
 
 # Plans:
-# 1:
-# Pass the play method into the guess method so that a test can verify how the guess is performing
-# 2:
-# generate a guessing engine that makes use of the existing Play and Evaluate functions
-# need to be able to save and restore the state of the board before each guess is made
-# need to be able to iterate over the options for a location where a guess is required
-# guessing will be required once normal plays fail to complete the board
-# 3:
-# Pass the evaluate method into the play method so that a test can verify how the evaluate how the play is performing
+#   Test board verification method to ensure that it catches
+# 
+#   1) when a row contains a number more than once.
+#   2) when a column contains a number more than once.
+#   3) when a sector contains a number more than once.

@@ -137,3 +137,7 @@ def guess(board, width, height, x, y, action, ignore = []):
                         updated = True
     return copy_of_board
     # recursively call guess??
+
+def verify(board, width, height):
+    return True
+    
