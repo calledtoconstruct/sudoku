@@ -157,4 +157,4 @@ def verify(board, width, height):
                     return False
                 else:
                     available.remove(value)
-    return True
+    return False
