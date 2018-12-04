@@ -148,4 +148,13 @@ def verify(board, width, height):
                     return False
                 else:
                     available.remove(value)
-    return False
+    for x in range(width):
+        available = options(width)
+        for y in range(height):
+            value = get(board, width, x, y)
+            if value != 0:
+                if value not in available:
+                    return False
+                else:
+                    available.remove(value)
+    return True

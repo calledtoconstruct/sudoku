@@ -289,11 +289,23 @@ def test_given_an_invalid_row_on_a_partially_complete_board_when_verifying_then_
 
 def test_given_an_invalid_column_on_a_partially_complete_board_when_verifying_then_false_is_returned():
     board = [
-        2, 1,  4, 3,
+        2, 4,  3, 1,
         1, 0,  0, 0,
         
         3, 2,  1, 4,
         2, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = verify(board, width, height)
+    assert(result == False)
+
+def test_given_an_invalid_sector_on_a_partially_complete_board_when_verifying_then_false_is_returned():
+    board = [
+        2, 1,  4, 3,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
     ]
     width, height = size(board)
     result = verify(board, width, height)
