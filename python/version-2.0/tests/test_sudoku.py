@@ -311,6 +311,18 @@ def test_given_an_invalid_sector_on_a_partially_complete_board_when_verifying_th
     result = verify(board, width, height)
     assert(result == False)
 
+def test_given_a_valid_partially_complete_board_when_verifying_then_true_is_returned():
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = verify(board, width, height)
+    assert(result == True)
+
 # Plans:
 #   Test board verification method to ensure that it catches
 # 
