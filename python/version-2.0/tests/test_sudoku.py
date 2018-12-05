@@ -323,10 +323,14 @@ def test_given_a_valid_partially_complete_board_when_verifying_then_true_is_retu
     result = verify(board, width, height)
     assert(result == True)
 
+guess_called = False
+
 def mock_guess(board, width, height, x, y, action):
+    global guess_called
+    guess_called = True
     return False
 
-def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
     board = [
         2, 3,  4, 1,
         1, 4,  0, 0,
@@ -336,8 +340,10 @@ def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_p
     ]
     width, height = size(board)
     result = fill(board, width, height, mock_guess)
-    assert(type(result) is list)
+    assert(guess_called)
 
+def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+    return 0
 
 # Plans:
 #   Update the guessing strategy so that it can guess recursively
