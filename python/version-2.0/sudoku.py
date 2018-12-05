@@ -154,6 +154,8 @@ def fill(board, width, height, guess_action, fill_action, play_action):
 
 def guess(board, width, height, x, y, guess_action, fill_action, play_action, ignore = []):
     options = evaluate(board, width, height, x, y, True)
+    # if len(options) == 0:
+    #     return False
     option = 0
     copy_of_board = board.copy()
     set(copy_of_board, width, x, y, options[option])

@@ -347,6 +347,20 @@ def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
     result = fill(board, width, height, mock_guess, fill, mock_play_always_returns_false)
     assert(guess_called)
 
+def test_given_a_partially_solved_board_and_no_valid_guesses_when_filling_then_false_is_returned():
+    global guess_called
+    guess_called = False
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = fill(board, width, height, mock_guess, fill, mock_play_always_returns_false)
+    assert(result == False)
+
 def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
     global guess_called
     guess_called = False
