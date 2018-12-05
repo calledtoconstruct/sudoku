@@ -144,7 +144,7 @@ def fill(board, width, height, guess_action, play_action):
     print(missing)
     if missing > 0:
         guess_action(board, width, height, 0, 0, play_action)
-    return []
+    return False
 
 def guess(board, width, height, x, y, action, ignore = []):
     options = evaluate(board, width, height, x, y, True)

@@ -361,6 +361,18 @@ def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_p
     result = fill(board, width, height, mock_guess, play)
     assert(guess_called == False)
 
+def test_given_a_partially_solved_board_when_filling_all_cells_then_board_is_returned():
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 3,
+        
+        3, 2,  1, 4,
+        4, 0,  3, 0
+    ]
+    width, height = size(board)
+    result = fill(board, width, height, mock_guess, play)
+    assert(type(result) is list)
+
 def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_correct_number_is_returned():
     board = [
         2, 3,  4, 1,
