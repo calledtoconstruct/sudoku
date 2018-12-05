@@ -121,19 +121,22 @@ def play(board, width, height, x, y, ignore = []):
                     changes_were_made = True
     return changes_were_made
 
+def empty(board, width, height):
+    return 0
+
 def fill(board, width, height, guess_action, play_action):
+    updated = True
+    while updated:
+        updated = False
+        for y in range(height):
+            for x in range(width):
+                value = get(board, width, x, y)
+                if value == 0:
+                    if play_action(board, width, height, x, y):
+                        updated = True
+    # missing = 
     guess_action(board, width, height, 0, 0, play_action)
     return []
-
-    # updated = True
-    # while updated:
-    #     updated = False
-    #     for y in range(height):
-    #         for x in range(width):
-    #             value = get(copy_of_board, width, x, y)
-    #             if value == 0:
-    #                 if action(copy_of_board, width, height, x, y):
-    #                     updated = True
 
 def guess(board, width, height, x, y, action, ignore = []):
     options = evaluate(board, width, height, x, y, True)

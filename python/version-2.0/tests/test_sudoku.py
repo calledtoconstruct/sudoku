@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate, get, play, sector_size, guess, verify, fill
+from sudoku import size, evaluate, get, play, sector_size, guess, verify, fill, empty
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -330,7 +330,7 @@ def mock_guess(board, width, height, x, y, action):
     guess_called = True
     return False
 
-def mock_play_always_returns_false(board, width, height, x, y, action): 
+def mock_play_always_returns_false(board, width, height, x, y): 
     return False
 
 def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
@@ -345,17 +345,30 @@ def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
     result = fill(board, width, height, mock_guess, mock_play_always_returns_false)
     assert(guess_called)
 
-def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+# def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+#     board = [
+#         2, 3,  4, 1,
+#         1, 4,  0, 3,
+        
+#         3, 2,  1, 4,
+#         4, 0,  0, 0
+#     ]
+#     width, height = size(board)
+#     result = fill(board, width, height, mock_guess, play)
+#     assert(guess_called == False)
+
+def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_correct_number_is_returned():
     board = [
         2, 3,  4, 1,
-        1, 4,  0, 3,
+        1, 4,  0, 0,
         
         3, 2,  1, 4,
         4, 0,  0, 0
     ]
     width, height = size(board)
-    result = fill(board, width, height, mock_guess, play)
-    assert(guess_called == False)
+    result = empty(board, width, height)
+    assert(result == 5)
+
 
 # Plans:
 #   Update the guessing strategy so that it can guess recursively
