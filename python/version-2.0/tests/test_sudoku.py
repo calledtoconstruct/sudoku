@@ -334,6 +334,8 @@ def mock_play_always_returns_false(board, width, height, x, y):
     return False
 
 def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
+    global guess_called
+    guess_called = False
     board = [
         2, 3,  4, 1,
         1, 4,  0, 0,
@@ -345,17 +347,19 @@ def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
     result = fill(board, width, height, mock_guess, mock_play_always_returns_false)
     assert(guess_called)
 
-# def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
-#     board = [
-#         2, 3,  4, 1,
-#         1, 4,  0, 3,
+def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+    global guess_called
+    guess_called = False
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 3,
         
-#         3, 2,  1, 4,
-#         4, 0,  0, 0
-#     ]
-#     width, height = size(board)
-#     result = fill(board, width, height, mock_guess, play)
-#     assert(guess_called == False)
+        3, 2,  1, 4,
+        4, 0,  3, 0
+    ]
+    width, height = size(board)
+    result = fill(board, width, height, mock_guess, play)
+    assert(guess_called == False)
 
 def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_correct_number_is_returned():
     board = [
