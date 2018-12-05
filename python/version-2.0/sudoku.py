@@ -130,38 +130,35 @@ def empty(board, width, height):
                 count += 1
     return count
 
-def fill(board, width, height, guess_action, play_action):
+def fill(board, width, height, guess_action, fill_action, play_action):
     updated = True
+    guess_x = False
+    guess_y = False
     while updated:
         updated = False
+        guess_x = False
+        guess_y = False
         for y in range(height):
             for x in range(width):
                 value = get(board, width, x, y)
                 if value == 0:
                     if play_action(board, width, height, x, y):
                         updated = True
+                    elif type(guess_x) is bool and type(guess_y) is bool:
+                        guess_x = x
+                        guess_y = y
     missing = empty(board, width, height)
     if missing > 0:
-        guess_action(board, width, height, 0, 0, play_action)
+        guess_action(board, width, height, guess_x, guess_y, guess_action, fill_action, play_action)
     return board
 
-def guess(board, width, height, x, y, action, ignore = []):
+def guess(board, width, height, x, y, guess_action, fill_action, play_action, ignore = []):
     options = evaluate(board, width, height, x, y, True)
     option = 0
     copy_of_board = board.copy()
     set(copy_of_board, width, x, y, options[option])
-    # call fill method
-    updated = True
-    while updated:
-        updated = False
-        for y in range(height):
-            for x in range(width):
-                value = get(copy_of_board, width, x, y)
-                if value == 0:
-                    if action(copy_of_board, width, height, x, y):
-                        updated = True
+    fill_action(copy_of_board, width, height, guess_action, fill_action, play_action)
     return copy_of_board
-    # recursively call guess??
 
 def verify(board, width, height):
     for y in range(height):

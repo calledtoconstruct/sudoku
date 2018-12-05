@@ -229,7 +229,7 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_play_returns_true_then_false)
+    guess(board, width, height, 1, 0, mock_guess, fill, mock_play_returns_true_then_false)
     assert(played == True)
     result = get(played_board, width, 1, 0)
     assert(result == 3)
@@ -244,7 +244,7 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_play_returns_true_then_false)
+    guess(board, width, height, 1, 0, mock_guess, fill, mock_play_returns_true_then_false)
     assert(played == True)
     result = get(played_board, width, 1, 0)
     assert(result == 1)
@@ -270,7 +270,7 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_recursively_then_p
         1, 4,  0, 0
     ]
     width, height = size(board)
-    copy_of_board = guess(board, width, height, 1, 0, play)
+    copy_of_board = guess(board, width, height, 1, 0, guess, fill, play)
     print_board(copy_of_board, width, height)
     result = get(copy_of_board, width, 1, 1)
     assert(result == 3)
@@ -325,7 +325,7 @@ def test_given_a_valid_partially_complete_board_when_verifying_then_true_is_retu
 
 guess_called = False
 
-def mock_guess(board, width, height, x, y, action):
+def mock_guess(board, width, height, x, y, guess_action, fill_action, play_action):
     global guess_called
     guess_called = True
     return False
@@ -344,7 +344,7 @@ def test_given_a_partially_solved_board_when_filling_then_guess_is_called():
         4, 0,  0, 0
     ]
     width, height = size(board)
-    result = fill(board, width, height, mock_guess, mock_play_always_returns_false)
+    result = fill(board, width, height, mock_guess, fill, mock_play_always_returns_false)
     assert(guess_called)
 
 def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
@@ -358,7 +358,7 @@ def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_p
         4, 0,  3, 0
     ]
     width, height = size(board)
-    result = fill(board, width, height, mock_guess, play)
+    result = fill(board, width, height, mock_guess, fill, play)
     assert(guess_called == False)
 
 def test_given_a_partially_solved_board_when_filling_all_cells_then_board_is_returned():
@@ -370,7 +370,7 @@ def test_given_a_partially_solved_board_when_filling_all_cells_then_board_is_ret
         4, 0,  3, 0
     ]
     width, height = size(board)
-    result = fill(board, width, height, mock_guess, play)
+    result = fill(board, width, height, mock_guess, fill, play)
     assert(type(result) is list)
     missing = empty(board, width, height)
     assert(missing == 0)
