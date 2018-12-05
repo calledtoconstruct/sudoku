@@ -162,7 +162,7 @@ def guess(board, width, height, x, y, guess_action, fill_action, play_action, ig
         result = fill_action(copy_of_board, width, height, guess_action, fill_action, play_action)
         if type(result) is list:
             return copy_of_board
-    return True
+    return False
 
 def verify(board, width, height):
     for y in range(height):
