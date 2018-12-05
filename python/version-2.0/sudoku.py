@@ -122,7 +122,7 @@ def play(board, width, height, x, y, ignore = []):
     return changes_were_made
 
 def fill(board, width, height, action):
-    return 0    
+    return []    
 
 def guess(board, width, height, x, y, action, ignore = []):
     options = evaluate(board, width, height, x, y, True)
