@@ -74,15 +74,23 @@ def evaluate(board, width, height, x, y, quick = False):
     value = get(board, width, x, y)
     if value != 0:
         return value
+
+    valid = []
     row = row_contains(board, width, y)
-    if len(row) == 1:
-        return row[0]
     column = column_contains(board, width, x)
-    if len(column) == 1:
-        return column[0]
     sector = sector_contains(board, width, height, x, y)
-    if len(sector) == 1:
-        return sector[0]
+    for r in row:
+        if r in column and r in sector and r not in valid:
+            valid.append(r)
+    for c in column:
+        if c in row and c in sector and c not in valid:
+            valid.append(c)
+    for s in sector:
+        if s in row and s in column and s not in valid:
+            valid.append(s)
+    if len(valid) == 1:
+        return valid[0]
+
     available = []
     for value in options(width):
         if value in row and value in column and value in sector:
@@ -149,19 +157,29 @@ def fill(board, width, height, guess_action, fill_action, play_action):
                         guess_y = y
     missing = empty(board, width, height)
     if missing > 0:
+        # for y in range(height):
+        #     for x in range(width):
+        #         value = get(board, width, x, y)
+        #         if value == 0:
+        #             result = guess_action(board, width, height, x, y, guess_action, fill_action, play_action)
+        #             if type(result) is list:
+        #                 return result
         result = guess_action(board, width, height, guess_x, guess_y, guess_action, fill_action, play_action)
-        if result == False:
-            return False
+        if type(result) is list:
+            return result
+        return False
     return board
 
 def guess(board, width, height, x, y, guess_action, fill_action, play_action, ignore = []):
-    options = evaluate(board, width, height, x, y, True)
-    for option in options:
+    available = evaluate(board, width, height, x, y, True)
+    print('while guessing', available, 'options available at', x, y)
+    for option in available:
+        print('guessing', option, 'at', x, y)
         copy_of_board = board.copy()
         set(copy_of_board, width, x, y, option)
         result = fill_action(copy_of_board, width, height, guess_action, fill_action, play_action)
         if type(result) is list:
-            return copy_of_board
+            return result
     return False
 
 def verify(board, width, height):

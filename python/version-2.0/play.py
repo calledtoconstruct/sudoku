@@ -1,5 +1,5 @@
 
-from sudoku import size, evaluate, get, play, verify
+from sudoku import size, evaluate, get, play, verify, fill, guess
 
 easy = [
     9, 0, 6,  3, 4, 0,  8, 1, 0,
@@ -96,37 +96,27 @@ def print_board(board, width, height):
             line += str(value)
         print(line)
 
-board = hard
+board = large
+
 width, height = size(board)
+
 valid_board = verify(board, width, height)
 if not valid_board:
     raise ValueError('Invalid board to begin with.')
-missing = missing_numbers(board, width, height)
-updated = True
 
 print_board(board, width, height)
 
-iterations = 0
+board = fill(board, width, height, guess, fill, play)
 
-while updated and missing > 0:
-    iterations += 1
-    updated = False
-    for y in range(height):
-        for x in range(width):
-            value = get(board, width, x, y)
-            if value == 0:
-                if play(board, width, height, x, y):
-                    updated = True
-    missing = missing_numbers(board, width, height)
+missing = missing_numbers(board, width, height)
 
 print_board(board, width, height)
 
 valid_board = verify(board, width, height)
-
 if not valid_board:
     raise ValueError('Invalid solution.')
 
 if missing == 0:
-    print('SOLVED! in', iterations, 'iterations.')
+    print('SOLVED!')
 else:
-    print('Gave up after', iterations, 'iterations.')
+    print('Gave up!')
