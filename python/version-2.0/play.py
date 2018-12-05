@@ -1,5 +1,5 @@
 
-from sudoku import size, evaluate, get, play
+from sudoku import size, evaluate, get, play, verify
 
 easy = [
     9, 0, 6,  3, 4, 0,  8, 1, 0,
@@ -17,6 +17,20 @@ easy = [
 
 medium = [
     0, 0, 0,  0, 0, 0,  0, 0, 0,
+    0, 0, 4,  3, 2, 8,  0, 0, 0,
+    6, 0, 0,  1, 0, 5,  0, 2, 9,
+
+    0, 0, 2,  0, 0, 1,  9, 6, 0,
+    4, 9, 0,  0, 0, 0,  0, 7, 1,
+    0, 1, 8,  9, 0, 0,  4, 0, 0,
+
+    5, 4, 0,  2, 0, 3,  0, 0, 7,
+    0, 0, 0,  6, 1, 7,  8, 0, 0,
+    0, 0, 0,  0, 0, 0,  0, 0, 0
+]
+
+invalid_medium = [
+    4, 0, 0,  0, 0, 0,  0, 0, 0,
     0, 0, 4,  3, 2, 8,  0, 0, 0,
     6, 0, 0,  1, 0, 5,  0, 2, 9,
 
@@ -82,8 +96,11 @@ def print_board(board, width, height):
             line += str(value)
         print(line)
 
-board = medium
+board = hard
 width, height = size(board)
+valid_board = verify(board, width, height)
+if not valid_board:
+    raise ValueError('Invalid board to begin with.')
 missing = missing_numbers(board, width, height)
 updated = True
 
@@ -103,6 +120,11 @@ while updated and missing > 0:
     missing = missing_numbers(board, width, height)
 
 print_board(board, width, height)
+
+valid_board = verify(board, width, height)
+
+if not valid_board:
+    raise ValueError('Invalid solution.')
 
 if missing == 0:
     print('SOLVED! in', iterations, 'iterations.')

@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate, get, play, sector_size, guess, verify
+from sudoku import size, evaluate, get, play, sector_size, guess, verify, fill
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -323,9 +323,39 @@ def test_given_a_valid_partially_complete_board_when_verifying_then_true_is_retu
     result = verify(board, width, height)
     assert(result == True)
 
+def mock_guess(board, width, height, x, y, action):
+    return False
+
+def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = fill(board, width, height, mock_guess)
+    assert(type(result) is list)
+
+
 # Plans:
-#   Test board verification method to ensure that it catches
-# 
-#   1) when a row contains a number more than once.
-#   2) when a column contains a number more than once.
-#   3) when a sector contains a number more than once.
+#   Update the guessing strategy so that it can guess recursively
+#   Update the guessing strategy so that it can detect a dead-end
+#
+#   1)  use fill method to scan line by line then cell by cell looking for known answers,
+#       once all known answers are filled,
+#       a)  if empty cells remain,
+#           call guess (go to #2)
+#       b)  if the board is complete,
+#           return the board
+#   2)  start guessing at the first empty cell with the first guess option,
+#       recursively call the fill method (go to step 1)
+#   3)  if guess is called, but no options are available, then return false
+#   4)  after a guess, if fill returns a board, return that board
+#   5)  after a guess, if fill returns false,
+#       a)  if more guess options exist,
+#           try the next one,
+#           recursively call the fill method (go to step 1)
+#       b)  if no more guess options exist,
+#           return false
