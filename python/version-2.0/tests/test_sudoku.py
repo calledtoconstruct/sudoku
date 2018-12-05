@@ -391,6 +391,22 @@ def test_given_a_partially_solved_board_and_no_valid_guesses_when_filling_then_n
     value = get(played_board, width, 2, 1)
     assert(value == 3)
 
+def test_given_a_partially_solved_board_and_fill_always_returns_false_when_filling_then_run_out_of_options_and_return_false():
+    global guess_called
+    global played_board
+    guess_called = False
+    played_board = False
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = guess(board, width, height, 2, 1, mock_guess, mock_fill_returns_false_then_stores_board, mock_play_always_returns_false)
+    assert(result == False)
+
 def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
     global guess_called
     guess_called = False
