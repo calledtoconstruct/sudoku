@@ -122,7 +122,13 @@ def play(board, width, height, x, y, ignore = []):
     return changes_were_made
 
 def empty(board, width, height):
-    return 5
+    count = 0
+    for y in range(height):
+        for x in range(width):
+            value = get(board, width, x, y)
+            if value == 0:
+                count += 1
+    return count
 
 def fill(board, width, height, guess_action, play_action):
     updated = True

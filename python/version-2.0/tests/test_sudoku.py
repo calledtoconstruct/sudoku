@@ -368,6 +368,16 @@ def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_c
     width, height = size(board)
     result = empty(board, width, height)
     assert(result == 5)
+    board = [
+        0, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = empty(board, width, height)
+    assert(result == 6)
 
 
 # Plans:
