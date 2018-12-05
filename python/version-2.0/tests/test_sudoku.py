@@ -372,6 +372,8 @@ def test_given_a_partially_solved_board_when_filling_all_cells_then_board_is_ret
     width, height = size(board)
     result = fill(board, width, height, mock_guess, play)
     assert(type(result) is list)
+    missing = empty(board, width, height)
+    assert(missing == 0)
 
 def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_correct_number_is_returned():
     board = [
