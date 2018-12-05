@@ -218,6 +218,13 @@ def mock_play_returns_true_then_false(board, width, height, x, y, ignore = []):
         return True
     return False
 
+def fill_always_returns_board(board, width, height, guess_action, fill_action, play_action):
+    global played
+    global played_board
+    played = True
+    played_board = board
+    return board
+
 def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_option_is_selected_and_play_is_called():
     global played
     global played_board
@@ -229,7 +236,7 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_guess, fill, mock_play_returns_true_then_false)
+    guess(board, width, height, 1, 0, mock_guess, fill_always_returns_board, mock_play_returns_true_then_false)
     assert(played == True)
     result = get(played_board, width, 1, 0)
     assert(result == 3)
@@ -244,7 +251,7 @@ def test_given_empty_cell_that_requires_a_guess_when_guessing_then_the_first_opt
         1, 0,  0, 0
     ]
     width, height = size(board)
-    guess(board, width, height, 1, 0, mock_guess, fill, mock_play_returns_true_then_false)
+    guess(board, width, height, 1, 0, mock_guess, fill_always_returns_board, mock_play_returns_true_then_false)
     assert(played == True)
     result = get(played_board, width, 1, 0)
     assert(result == 1)
@@ -360,6 +367,29 @@ def test_given_a_partially_solved_board_and_no_valid_guesses_when_filling_then_f
     width, height = size(board)
     result = fill(board, width, height, mock_guess, fill, mock_play_always_returns_false)
     assert(result == False)
+
+def mock_fill_returns_false_then_stores_board(board, width, height, guess_action, fill_action, play_action):
+    global played_board
+    played_board = board
+    return False
+
+def test_given_a_partially_solved_board_and_no_valid_guesses_when_filling_then_next_guess_is_tried():
+    global guess_called
+    global played_board
+    guess_called = False
+    played_board = False
+    board = [
+        2, 3,  4, 1,
+        1, 4,  0, 0,
+        
+        3, 2,  1, 4,
+        4, 0,  0, 0
+    ]
+    width, height = size(board)
+    result = guess(board, width, height, 2, 1, mock_guess, mock_fill_returns_false_then_stores_board, mock_play_always_returns_false)
+    assert(type(played_board) is list)
+    value = get(played_board, width, 2, 1)
+    assert(value == 3)
 
 def test_given_a_partially_solved_board_when_filling_then_all_known_values_are_populated():
     global guess_called
