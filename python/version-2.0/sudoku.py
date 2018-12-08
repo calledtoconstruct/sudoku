@@ -11,16 +11,22 @@ def sector_size(board):
     vertically = math.ceil(sqrt)
     return horizontally, vertically
 
+option_cache = {}
+
 def options(width):
+    global option_cache
+    if width in option_cache:
+        return option_cache.get(width).copy()
     options = []
     for x in range(width):
         options.append(x + 1)
+    option_cache[width] = options.copy()
     return options
 
 def get(board, width, x, y):
     return board[y * width + x]
 
-def row_contains(board, width, y):
+def row_allows(board, width, y):
     available = options(width)
     for x in range(width):
         value = get(board, width, x, y)
@@ -28,7 +34,7 @@ def row_contains(board, width, y):
             available.remove(value)
     return available
 
-def column_contains(board, width, x):
+def column_allows(board, width, x):
     available = options(width)
     for y in range(width):
         value = get(board, width, x, y)
@@ -36,7 +42,7 @@ def column_contains(board, width, x):
             available.remove(value)
     return available
 
-def scan_sector(board, width, height, x, y, action, available, ignore = []):
+def scan_sector(board, width, height, x, y, action, available):
     horizontally, vertically = sector_size(board)
     cells_horizontally = math.floor(width / horizontally)
     a = math.floor(x / cells_horizontally) * cells_horizontally
@@ -47,7 +53,7 @@ def scan_sector(board, width, height, x, y, action, available, ignore = []):
             if horizontal_index != x or vertical_index != y:
                 action(board, width, height, horizontal_index, vertical_index, available)
 
-def sector_contains(board, width, height, x, y):
+def sector_allows(board, width, height, x, y):
     available = options(width)
     scan_sector(board, width, height, x, y, exclude_used_options, available)
     return available
@@ -75,21 +81,9 @@ def evaluate(board, width, height, x, y, quick = False):
     if value != 0:
         return value
 
-    valid = []
-    row = row_contains(board, width, y)
-    column = column_contains(board, width, x)
-    sector = sector_contains(board, width, height, x, y)
-    for r in row:
-        if r in column and r in sector and r not in valid:
-            valid.append(r)
-    for c in column:
-        if c in row and c in sector and c not in valid:
-            valid.append(c)
-    for s in sector:
-        if s in row and s in column and s not in valid:
-            valid.append(s)
-    if len(valid) == 1:
-        return valid[0]
+    row = row_allows(board, width, y)
+    column = column_allows(board, width, x)
+    sector = sector_allows(board, width, height, x, y)
 
     available = []
     for value in options(width):
@@ -110,71 +104,65 @@ def evaluate(board, width, height, x, y, quick = False):
 def set(board, width, x, y, value):
     board[y * width + x] = value
 
-def play(board, width, height, x, y, ignore = []):
+def play(board, width, height, x, y, ignore_list = [], recurse = True):
     if get(board, width, x, y) != 0:
         return False
-    ignore.append([x, y])
+    ignore_list.append([x, y])
     changes_were_made = False
     updated = True
     while updated:
         updated = False
+        ignore = ignore_list.copy()
         value = evaluate(board, width, height, x, y)
         if value != 0:
             set(board, width, x, y, value)
             return True
-        for index in range(width):
-            if [index, y] not in ignore:
-                if play(board, width, height, index, y, ignore):
-                    updated = True
-                    changes_were_made = True
+        if recurse:
+            for index in range(width):
+                if [index, y] not in ignore:
+                    if play(board, width, height, index, y, ignore, False):
+                        updated = True
+                        changes_were_made = True
+                if [x, index] not in ignore:
+                    if play(board, width, height, x, index, ignore, False):
+                        updated = True
+                        changes_were_made = True
     return changes_were_made
 
-def empty(board, width, height):
-    count = 0
+def complete(board, width, height):
     for y in range(height):
         for x in range(width):
             value = get(board, width, x, y)
             if value == 0:
-                count += 1
-    return count
+                return False
+    return True
 
 def fill(board, width, height, guess_action, fill_action, play_action):
     updated = True
-    guess_x = False
-    guess_y = False
+    guess = False
     while updated:
         updated = False
-        guess_x = False
-        guess_y = False
+        guess = False
         for y in range(height):
             for x in range(width):
                 value = get(board, width, x, y)
                 if value == 0:
                     if play_action(board, width, height, x, y):
                         updated = True
-                    elif type(guess_x) is bool and type(guess_y) is bool:
-                        guess_x = x
-                        guess_y = y
-    missing = empty(board, width, height)
-    if missing > 0:
-        # for y in range(height):
-        #     for x in range(width):
-        #         value = get(board, width, x, y)
-        #         if value == 0:
-        #             result = guess_action(board, width, height, x, y, guess_action, fill_action, play_action)
-        #             if type(result) is list:
-        #                 return result
-        result = guess_action(board, width, height, guess_x, guess_y, guess_action, fill_action, play_action)
-        if type(result) is list:
-            return result
-        return False
-    return board
+                    elif type(guess) is bool:
+                        guess = [x, y]
+    if complete(board, width, height):
+        return board
+    result = guess_action(board, width, height, guess[0], guess[1], guess_action, fill_action, play_action)
+    if type(result) is list:
+        return result
+    return False
 
 def guess(board, width, height, x, y, guess_action, fill_action, play_action, ignore = []):
     available = evaluate(board, width, height, x, y, True)
-    print('while guessing', available, 'options available at', x, y)
+    print('at', x, ',', y, 'found options', available)
     for option in available:
-        print('guessing', option, 'at', x, y)
+        print('at', x, ',', y, 'guessing', option)
         copy_of_board = board.copy()
         set(copy_of_board, width, x, y, option)
         result = fill_action(copy_of_board, width, height, guess_action, fill_action, play_action)

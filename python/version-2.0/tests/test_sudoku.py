@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from sudoku import size, evaluate, get, play, sector_size, guess, verify, fill, empty
+from sudoku import size, evaluate, get, play, sector_size, guess, verify, fill, complete
 
 def test_given_board_with_sixteen_entries_when_calculating_size_width_and_height_are_four():
     board = [
@@ -432,8 +432,8 @@ def test_given_a_partially_solved_board_when_filling_all_cells_then_board_is_ret
     width, height = size(board)
     result = fill(board, width, height, mock_guess, fill, play)
     assert(type(result) is list)
-    missing = empty(board, width, height)
-    assert(missing == 0)
+    done = complete(board, width, height)
+    assert(done)
 
 def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_correct_number_is_returned():
     board = [
@@ -444,37 +444,5 @@ def test_given_a_partially_solved_board_when_counting_the_empty_cells_then_the_c
         4, 0,  0, 0
     ]
     width, height = size(board)
-    result = empty(board, width, height)
-    assert(result == 5)
-    board = [
-        0, 3,  4, 1,
-        1, 4,  0, 0,
-        
-        3, 2,  1, 4,
-        4, 0,  0, 0
-    ]
-    width, height = size(board)
-    result = empty(board, width, height)
-    assert(result == 6)
-
-
-# Plans:
-#   Update the guessing strategy so that it can guess recursively
-#   Update the guessing strategy so that it can detect a dead-end
-#
-#   1)  use fill method to scan line by line then cell by cell looking for known answers,
-#       once all known answers are filled,
-#       a)  if empty cells remain,
-#           call guess (go to #2)
-#       b)  if the board is complete,
-#           return the board
-#   2)  start guessing at the first empty cell with the first guess option,
-#       recursively call the fill method (go to step 1)
-#   3)  if guess is called, but no options are available, then return false
-#   4)  after a guess, if fill returns a board, return that board
-#   5)  after a guess, if fill returns false,
-#       a)  if more guess options exist,
-#           try the next one,
-#           recursively call the fill method (go to step 1)
-#       b)  if no more guess options exist,
-#           return false
+    result = complete(board, width, height)
+    assert(not result)
